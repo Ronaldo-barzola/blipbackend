@@ -21,7 +21,7 @@ class JwtMiddleware extends BaseMiddleware
     {
         try {
 
-            // $user = JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
             $user = 242;
 
         } catch (Exception $e) {
