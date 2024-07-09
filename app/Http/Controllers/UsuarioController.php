@@ -3,72 +3,94 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
-
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Validator;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use App\UserCRM;
-use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\UtilController as UtilController;
 
 class UsuarioController extends Controller
 {
 
-    public function __construct()
-    {
-    }
 
-    public function registrarUsuario(Request $request)
+    public function login(Request $request)
     {
-        $p_tdo_id = ($request['p_tdo_id']) ? $request['tdo_id'] : 0;
-        $p_usu_numdoc = $request['p_usu_numdoc'] ? $request['p_usu_numdoc'] : '';
-        $p_usu_apepat = $request['p_usu_apepat'] ? $request['p_usu_apepat'] : '';
-        $p_usu_apemat = $request['p_usu_apemat'] ? $request['p_usu_apemat'] : '';
-        $p_usu_nombre = $request['p_usu_nombre'] ? $request['p_usu_nombre'] : '';
-        $p_usu_direcc = $request['p_usu_direcc'] ? $request['p_usu_direcc'] : '';
-        $p_usu_nrotel = $request['p_usu_nrotel'] ? $request['p_usu_nrotel'] : '';
-        $p_usu_correo = $request['p_usu_correo'] ? $request['p_usu_correo'] : '';
-        $p_usu_contra = $request['p_usu_contra'] ? $request['p_usu_contra'] : '';
-        $p_tiu_id = $request['p_tiu_id'] ? $request['p_tiu_id'] : 0;
-        $p_tac_id = $request['p_tac_id'] ? $request['p_tac_id'] : 0;
-        $p_usu_fecnac = $request['p_usu_fecnac'] ? $request['p_usu_fecnac'] : NULL;
-        $p_tge_id = $request['p_tge_id'] ? $request['p_tge_id'] : 0;
+        $p_usu_login = $request['p_usu_login'];
+        $p_usc_claveencript = md5($request['p_usc_clave']);
+        $p_usc_clave = $request['p_usc_clave'];
+        $p_usc_controlpostgres = true;
 
-        $results = DB::selectOne('SELECT * FROM usuario.spu_usuario_reg(?,?,?,?,?,?,?,?,?,?,?,?,?);', [
-            $p_tdo_id,
-            $p_usu_numdoc,
-            $p_usu_apepat,
-            $p_usu_apemat,
-            $p_usu_nombre,
-            $p_usu_direcc,
-            $p_usu_nrotel,
-            $p_usu_correo,
-            $p_usu_contra,
-            $p_tiu_id,
-            $p_tac_id,
-            $p_usu_fecnac,
-            $p_tge_id
+        $results = DB::selectOne('SELECT * FROM sic_ssi2.spu_autenticacion (?,?,?,?)', [
+            $p_usu_login,
+            $p_usc_claveencript,
+            $p_usc_clave,
+            $p_usc_controlpostgres
         ]);
 
         return response()->json($results);
     }
 
-    public function listarTipoDocumento(Request $request)
+    public function usuarioAccesoIns(Request $request)
     {
-        $results = DB::select('SELECT * FROM maestro.spu_tipodocumento_sel();', []);
+        $getIp = new UtilController;
+
+        $p_usu_id = $request['p_usu_id'];
+        $p_sis_id = ($request['p_sis_id']) ? $request['p_sis_id'] : 1;
+        $p_nav_descripcion = ($request['p_nav_descripcion']) ? $request['p_nav_descripcion'] : '';
+        $p_nav_version = ($request['p_nav_version']) ? $request['p_nav_version'] : '';
+        $p_ip = $getIp->getIp();
+        $p_host = ($request['p_host']) ? $request['p_host'] : '';
+        $p_macaddress = ($request['p_macaddress']) ? $request['p_macaddress'] : '';
+
+        $results = DB::selectOne('SELECT * FROM public.spu_usuarioacceso_ins (?,?,?,?,?,?,?)', [
+            $p_usu_id,
+            $p_sis_id,
+            $p_nav_descripcion,
+            $p_nav_version,
+            $p_ip,
+            $p_host,
+            $p_macaddress
+        ]);
 
         return response()->json($results);
     }
 
-    public function listarTipoGenero(Request $request)
+
+    public function usuarioSistemaSel(Request $request)
     {
-        $results = DB::select('SELECT * FROM maestro.spu_tipo_genero();', []);
+        $getIp = new UsuarioController;
+        $p_usu_id = $request['p_usu_id'];
+        $p_sis_id = ($request['p_sis_id']) ? $request['p_sis_id'] : 0;
+        $p_nav_descripcion = ($request['p_nav_descripcion']) ? $request['p_nav_descripcion'] : '';
+        $p_nav_version = ($request['p_nav_version']) ? $request['p_nav_version'] : '';
+        $p_ip = $getIp->getIp();
+        $p_host = ($request['p_host']) ? $request['p_host'] : '';
+        $p_macaddress = ($request['p_macaddress']) ? $request['p_macaddress'] : '';
+
+        $results = DB::selectOne('SELECT * FROM sic_ssi2.spu_usuariosistema_sel(?,?,?,?,?,?)', [
+            $p_usu_id,
+            $p_sis_id,
+            $p_nav_descripcion,
+            $p_nav_version,
+            $p_ip,
+            $p_host,
+            $p_macaddress
+        ]);
 
         return response()->json($results);
     }
+
+    public function entidadSel(Request $request)
+    {
+        $p_ent_id = $request['p_ent_id'];
+
+        $results = DB::selectOne('SELECT * FROM public.spu_entidad_sel(?)', [
+            $p_ent_id
+        ]);
+
+        return response()->json($results);
+    }
+
+
+    
 
 
 }
