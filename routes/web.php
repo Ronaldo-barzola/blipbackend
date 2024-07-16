@@ -30,7 +30,6 @@ Route::prefix('v1')->group(function () {
         Route::post('accesoIns', [UsuarioController::class, 'usuarioAccesoIns']);
         Route::post('entidad/listar', [UsuarioController::class, 'entidadSel']);
     });
-
     Route::prefix('saldos')->group(function () {
         Route::post('dashboard01', [SaldosController::class, 'dashboard01']);
         Route::post('dashboard02', [SaldosController::class, 'dashboard02']);
