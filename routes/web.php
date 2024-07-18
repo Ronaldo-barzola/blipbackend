@@ -17,7 +17,7 @@ use App\Http\Controllers\SaldosController;
 */
 
 Route::get('/', function () {
-    return 'API SALDOS - V1';
+    return 'API BLIP';
 });
 
 Route::get('/phpinfo', function () {
@@ -26,7 +26,7 @@ Route::get('/phpinfo', function () {
 
 Route::prefix('v1')->group(function () {
     Route::prefix('usuario')->group(function () {
-        Route::post('login', [UsuarioController::class, 'login']);
+        Route::post('tipodocumento/listar', [UsuarioController::class, 'login']);
         Route::post('accesoIns', [UsuarioController::class, 'usuarioAccesoIns']);
         Route::post('entidad/listar', [UsuarioController::class, 'entidadSel']);
     });
